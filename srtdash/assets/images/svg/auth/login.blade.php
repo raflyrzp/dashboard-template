@@ -40,6 +40,11 @@
                         <p>Halo, selamat datang di Academunch</p>
                     </div>
                     <div class="login-form-body">
+                        @if ($errors->any())
+                            @foreach ($errors->all() as $error)
+                                <small class="text-danger">{{ $error }}</small>
+                            @endforeach
+                        @endif
                         <div class="form-gp">
                             <label for="email">Email</label>
                             <input type="email" id="email" name="email">
@@ -54,6 +59,11 @@
                         </div>
                         <div class="submit-btn-area mt-5">
                             <button id="form_submit" type="submit">Submit <i class="ti-arrow-right"></i></button>
+                        </div>
+                        <div class="form-footer text-center mt-5">
+                            <p class="text-muted">
+                                Belum mempunyai akun? <a href="{{ route('regist') }}">Registrasi!</a>
+                            </p>
                         </div>
                     </div>
                 </form>

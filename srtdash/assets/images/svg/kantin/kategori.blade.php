@@ -31,9 +31,10 @@
                 </div>
                 <div class="col-sm-6 clearfix">
                     <div class="user-profile pull-right">
-                        <img class="avatar user-thumb" src="{{ asset('assets/images/author/avatar.png') }}" alt="avatar">
-                        <h4 class="user-name dropdown-toggle" data-toggle="dropdown">{{ auth()->user()->nama }} <i
-                                class="fa fa-angle-down"></i></h4>
+                        {{-- <img class="avatar user-thumb" src="{{ asset('assets/images/author/avatar.png') }}" alt="avatar"> --}}
+                        <h4 class="user-name dropdown-toggle" data-toggle="dropdown">
+                            {{ auth()->user()->nama . '(' . auth()->user()->role . ')' }} <i class="fa fa-angle-down"></i>
+                        </h4>
                         <div class="dropdown-menu">
                             <a class="dropdown-item" href="{{ route('logout') }}">Log Out</a>
                         </div>
@@ -73,10 +74,12 @@
                                                             data-target="#editModal{{ $kategori->id }}"><i
                                                                 class="ti-pencil"></i></button>
 
-                                                        <button type="button" class="btn btn-sm btn-danger mb-1"
-                                                            data-toggle="modal"
-                                                            data-target="#deleteModal{{ $kategori->id }}"><i
-                                                                class="ti-trash"></i></button>
+                                                        @if ($kategori->id !== 1)
+                                                            <button type="button" class="btn btn-sm btn-danger mb-1"
+                                                                data-toggle="modal"
+                                                                data-target="#deleteModal{{ $kategori->id }}"><i
+                                                                    class="ti-trash"></i></button>
+                                                        @endif
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -94,41 +97,40 @@
     </div>
     <!-- main content area end -->
 
-    @foreach ($kategoris as $kategori)
-        <div class="modal fade" id="tambahModal" tabindex="-1" role="dialog" aria-labelledby="tambahModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="tambahModalLabel">Tambah Kategori</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span>&times;</span>
+    <div class="modal fade" id="tambahModal" tabindex="-1" role="dialog" aria-labelledby="tambahModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="tambahModalLabel">Tambah Kategori</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <form action="{{ route('kategori.store') }}" method="post">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="nama_kategori">Nama Kategori</label>
+                            <input id="nama_kategori" name="nama_kategori" type="text" placeholder=""
+                                class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light-secondary" data-dismiss="modal">
+                            <i class="bx bx-x d-block d-sm-none"></i>
+                            <span class="d-none d-sm-block">Tutup</span>
+                        </button>
+                        <button type="submit" class="btn btn-primary ms-1">
+                            <i class="bx bx-check d-block d-sm-none"></i>
+                            <span class="d-none d-sm-block">Simpan</span>
                         </button>
                     </div>
-                    <form action="{{ route('kategori.store') }}" method="post">
-                        @csrf
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label for="nama_kategori">Nama Kategori</label>
-                                <input id="nama_kategori" name="nama_kategori" type="text" placeholder=""
-                                    class="form-control" required>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-light-secondary" data-dismiss="modal">
-                                <i class="bx bx-x d-block d-sm-none"></i>
-                                <span class="d-none d-sm-block">Tutup</span>
-                            </button>
-                            <button type="submit" class="btn btn-primary ms-1">
-                                <i class="bx bx-check d-block d-sm-none"></i>
-                                <span class="d-none d-sm-block">Simpan</span>
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                </form>
             </div>
         </div>
-
+    </div>
+    @foreach ($kategoris as $kategori)
         <div class="modal fade" id="editModal{{ $kategori->id }}" tabindex="-1" role="dialog"
             aria-labelledby="editModalLabel{{ $kategori->id }}" aria-hidden="true">
             <div class="modal-dialog modal-lg">

@@ -31,9 +31,9 @@
                         <div class="col-xl-8">
                             <ul class="list-unstyled">
                                 <li class="text-muted">
-                                    Nama : {{ auth()->user()->nama }}
+                                    Nama : {{ $pembeli }}
                                 </li>
-                                <li class="text-muted">{{ now()->format('d F Y') }}</li>
+                                <li class="text-muted">{{ $tanggal }}</li>
                                 <li class="text-muted">{{ $invoice }}</li>
                                 <li class="text-muted">Status : {{ strtoupper($status) }}
                                 </li>
@@ -95,8 +95,8 @@
             window.print();
 
             window.addEventListener('afterprint', function() {
+                history.go(-2);
 
-                window.location.href = '{{ route('siswa.index') }}';
             });
 
         });

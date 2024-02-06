@@ -31,9 +31,11 @@
                 </div>
                 <div class="col-sm-6 clearfix">
                     <div class="user-profile pull-right">
-                        <img class="avatar user-thumb" src="{{ asset('assets/images/author/avatar.png') }}" alt="avatar">
-                        <h4 class="user-name dropdown-toggle" data-toggle="dropdown">{{ auth()->user()->nama }} <i
-                                class="fa fa-angle-down"></i></h4>
+                        {{-- <img class="avatar user-thumb" src="{{ asset('assets/images/author/avatar.png') }}" alt="avatar"> --}}
+
+                        <h4 class="user-name dropdown-toggle" data-toggle="dropdown">
+                            {{ auth()->user()->nama . '(' . auth()->user()->role . ')' }} <i class="fa fa-angle-down"></i>
+                        </h4>
                         <div class="dropdown-menu">
                             <a class="dropdown-item" href="{{ route('logout') }}">Log Out</a>
                         </div>
@@ -51,11 +53,14 @@
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="header-title">Riwayat Tarik Tunai</h4>
+                                <a href="{{ route('cetak.seluruh.withdrawal') }}" class="btn btn-danger mb-3"><i
+                                        class="ti-printer"></i>
+                                    Cetak</a>
                                 <div class="list-group list-group-flush">
                                     @foreach ($withdrawals as $withdrawal)
                                         <h6 class="bg-body-tertiary p-2 border-top border-bottom">
                                             {{ $withdrawal->tanggal }}
-                                            <span class="float-right">Rp.
+                                            <span class="float-right text-danger">- Rp.
                                                 {{ number_format($withdrawal->nominal, 2, ',', '.') }}</span>
                                         </h6>
                                         @php
@@ -67,19 +72,35 @@
 
                                         <ul class="list-group list-group-light mb-4">
                                             @foreach ($withdrawalList as $list)
-                                                <li
-                                                    class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                                    <div class="d-flex align-items-center col-12">
-                                                        <div class="ms-3 col-12">
-                                                            <p class="fw-bold mb-1">{{ $list->kode_unik }} <span
-                                                                    class="float-right">{{ $list->created_at }}</span>
-                                                            </p>
-                                                            <p class="text-muted mb-0">Rp.
-                                                                {{ number_format($list->nominal, 2, ',', '.') }}
-                                                            </p>
+                                                <a href="{{ route('cetak.withdrawal', $list->kode_unik) }}">
+
+                                                    <li
+                                                        class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                                        <div class="d-flex align-items-center col-12">
+                                                            <div class="ms-3 col-12">
+                                                                <p class="fw-bold mb-1">{{ $list->kode_unik }} <span
+                                                                        class="float-right">{{ $list->created_at }}</span>
+                                                                </p>
+                                                                <p class="text-danger mb-0">- Rp.
+                                                                    {{ number_format($list->nominal, 2, ',', '.') }}
+                                                                </p>
+                                                                @if ($list->status == 'menunggu')
+                                                                    <p class="badge badge-info p-2">
+                                                                        {{ strtoupper($list->status) }}
+                                                                    </p>
+                                                                @elseif($list->status == 'dikonfirmasi')
+                                                                    <p class="badge badge-success p-2">
+                                                                        {{ strtoupper($list->status) }}
+                                                                    </p>
+                                                                @else
+                                                                    <p class="badge badge-danger p-2">
+                                                                        {{ strtoupper($list->status) }}
+                                                                    </p>
+                                                                @endif
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </li>
+                                                    </li>
+                                                </a>
                                             @endforeach
                                         </ul>
                                     @endforeach

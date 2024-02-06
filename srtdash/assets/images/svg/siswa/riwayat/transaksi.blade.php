@@ -31,9 +31,11 @@
                 </div>
                 <div class="col-sm-6 clearfix">
                     <div class="user-profile pull-right">
-                        <img class="avatar user-thumb" src="{{ asset('assets/images/author/avatar.png') }}" alt="avatar">
-                        <h4 class="user-name dropdown-toggle" data-toggle="dropdown">{{ auth()->user()->nama }} <i
-                                class="fa fa-angle-down"></i></h4>
+                        {{-- <img class="avatar user-thumb" src="{{ asset('assets/images/author/avatar.png') }}" alt="avatar"> --}}
+
+                        <h4 class="user-name dropdown-toggle" data-toggle="dropdown">
+                            {{ auth()->user()->nama . '(' . auth()->user()->role . ')' }} <i class="fa fa-angle-down"></i>
+                        </h4>
                         <div class="dropdown-menu">
                             <a class="dropdown-item" href="{{ route('logout') }}">Log Out</a>
                         </div>
@@ -52,11 +54,6 @@
                                 <h4 class="header-title">Riwayat Transaksi</h4>
                                 <div class="list-group list-group-flush">
                                     @foreach ($transaksis as $transaksi)
-                                        <h6 class="bg-body-tertiary p-2 border-top border-bottom">
-                                            {{ $transaksi->tanggal }}
-                                            <span class="float-right">Rp.
-                                                {{ number_format($totalHargaPerHari, 2, ',', '.') }}</span>
-                                        </h6>
                                         @php
                                             $transaksiList = App\Models\Transaksi::select('invoice', 'created_at', 'status')
                                                 ->where(DB::raw('DATE(created_at)'), $transaksi->tanggal)
@@ -64,14 +61,24 @@
                                                 ->groupBy('invoice', 'created_at', 'status')
                                                 ->orderBy('created_at', 'desc')
                                                 ->get();
+
+                                            $totalHarga = App\Models\Transaksi::where(DB::raw('DATE(created_at)'), $transaksi->tanggal)
+                                                ->where('id_user', auth()->id())
+                                                ->whereIn('status', ['dipesan', 'dikonfirmasi'])
+                                                ->sum('total_harga');
                                         @endphp
+                                        <h6 class="bg-body-tertiary p-2 border-top border-bottom">
+                                            {{ $transaksi->tanggal }}
+                                            <span class="float-right text-danger">- Rp.
+                                                {{ number_format($totalHarga, 2, ',', '.') }}</span>
+                                        </h6>
 
                                         <ul class="list-group list-group-light mb-4">
                                             @foreach ($transaksiList as $list)
                                                 @php
                                                     $totalHarga = App\Models\Transaksi::where('invoice', $list->invoice)->sum('total_harga');
                                                 @endphp
-                                                <a href="{{ route('siswa.transaksi.detail', $list->invoice) }}">
+                                                <a href="{{ route('transaksi.detail', $list->invoice) }}">
                                                     <li
                                                         class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                                                         <div class="d-flex align-items-center col-12">
@@ -79,20 +86,20 @@
                                                                 <p class="fw-bold mb-1">{{ $list->invoice }} <span
                                                                         class="float-right">{{ $list->created_at }}</span>
                                                                 </p>
-                                                                <p class="text-muted mb-0">Rp.
+                                                                <p class="text-danger mb-0">- Rp.
                                                                     {{ number_format($totalHarga, 2, ',', '.') }}
                                                                 </p>
                                                                 </p>
                                                                 @if ($list->status == 'dipesan')
-                                                                    <p class="text-info">
+                                                                    <p class="badge badge-info p-2">
                                                                         {{ strtoupper($list->status) }}
                                                                     </p>
                                                                 @elseif($list->status == 'dikonfirmasi')
-                                                                    <p class="text-success">
+                                                                    <p class="badge badge-success p-2">
                                                                         {{ strtoupper($list->status) }}
                                                                     </p>
                                                                 @else
-                                                                    <p class="text-danger">
+                                                                    <p class="badge badge-danger p-2">
                                                                         {{ strtoupper($list->status) }}
                                                                     </p>
                                                                 @endif

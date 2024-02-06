@@ -31,9 +31,11 @@
                 </div>
                 <div class="col-sm-6 clearfix">
                     <div class="user-profile pull-right">
-                        <img class="avatar user-thumb" src="{{ asset('assets/images/author/avatar.png') }}" alt="avatar">
-                        <h4 class="user-name dropdown-toggle" data-toggle="dropdown">{{ auth()->user()->nama }} <i
-                                class="fa fa-angle-down"></i></h4>
+                        {{-- <img class="avatar user-thumb" src="{{ asset('assets/images/author/avatar.png') }}" alt="avatar"> --}}
+
+                        <h4 class="user-name dropdown-toggle" data-toggle="dropdown">
+                            {{ auth()->user()->nama . '(' . auth()->user()->role . ')' }} <i class="fa fa-angle-down"></i>
+                        </h4>
                         <div class="dropdown-menu">
                             <a class="dropdown-item" href="{{ route('logout') }}">Log Out</a>
                         </div>
@@ -62,8 +64,8 @@
                                     <div class="col-md-6">
                                         <div class="invoice-address">
                                             <h3>Invoice</h3>
-                                            <h5>{{ auth()->user()->nama }}</h5>
-                                            <p>{{ auth()->user()->email }}</p>
+                                            <h5>{{ $pembeli }}</h5>
+                                            <p>{{ $email }}</p>
                                             <p>Status :
                                                 {{ $selectedProducts->first()->status !== null ? strtoupper($selectedProducts->first()->status) : 'DIPESAN' }}
                                             </p>
@@ -117,20 +119,26 @@
                             </div>
                             <div class="invoice-buttons">
                                 <div class="float-left">
-                                    <a href="javascript:history.back()">Kembali</a>
-
+                                    @if (auth()->user()->role === 'kantin')
+                                        <a href="{{ route('kantin.laporan') }}">Kembali</a>
+                                    @else
+                                        <a href="{{ route('siswa.riwayat.transaksi') }}">Kembali</a>
+                                    @endif
+                                    {{-- <a href="javascript:history.back()">Kembali</a> --}}
                                 </div>
                                 <div class="float-right">
-                                    @if ($selectedProducts->first()->status === 'dipesan')
-                                        <form action="{{ route('batal.transaksi', $invoice) }}" method="post"
-                                            class="d-inline">
-                                            @csrf
-                                            @method('PUT')
-                                            <a href="" class="invoice-btn bg-danger">
-                                                <button type="submit"
-                                                    class="border-0 bg-transparent text-white font-weight-bold">Batal
-                                                </button></a>
-                                        </form>
+                                    @if (auth()->user()->role === 'siswa')
+                                        @if ($selectedProducts->first()->status === 'dipesan')
+                                            <form action="{{ route('batal.transaksi', $invoice) }}" method="post"
+                                                class="d-inline">
+                                                @csrf
+                                                @method('PUT')
+                                                <a href="" class="invoice-btn bg-danger">
+                                                    <button type="submit"
+                                                        class="border-0 bg-transparent text-white font-weight-bold">Batal
+                                                    </button></a>
+                                            </form>
+                                        @endif
                                     @endif
                                     <a href="#" class="invoice-btn" id="printInvoiceBtn">Cetak Invoice</a>
                                 </div>

@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="{{ asset('assets/js/datatables-responsive/css/responsive.bootstrap4.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/js/datatables-buttons/css/buttons.bootstrap4.min.css') }}" />
 
+
     <!-- others css -->
     <link rel="stylesheet" href="{{ asset('assets/css/typography.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/default-css.css') }}">
@@ -29,6 +30,29 @@
     <link rel="stylesheet" href="{{ asset('assets/css/responsive.css') }}">
     <!-- modernizr css -->
     <script src="{{ asset('assets/js/vendor/modernizr-2.8.3.min.js') }}"></script>
+
+    <style>
+        .btn-primary {
+            background-color: #805EF5;
+            border: 1px solid #805EF5;
+        }
+
+        .btn-primary:disabled {
+            background-color: #805EF5;
+            border: 1px solid #805EF5;
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-primary:focus {
+            border-color: #805EF5;
+        }
+
+        .btn-primary:hover {
+            background-color: #4b2cae;
+            border: 1px solid #4b2cae;
+        }
+    </style>
 </head>
 
 <body>
